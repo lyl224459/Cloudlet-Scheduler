@@ -1,4 +1,4 @@
-package la4am12.ga;
+package la4am12.tentgaga;
 
 /**
  * @author : LA4AM12
@@ -10,7 +10,9 @@ import la4am12.datacenter.OptFunction;
 
 import java.util.*;
 
-public class GeneticAlgorithm {
+import static la4am12.datacenter.chaosMap.*;
+
+public class TentGeneticAlgorithm {
     /**
      * optFunction: 优化函数，用于评估染色体的适应度。
      * boundary: 边界值，可能用于限制某些参数的范围。
@@ -35,7 +37,7 @@ public class GeneticAlgorithm {
     private List<Chromosome> Chromosomes;
     Chromosome bestChromosome = null;
 
-    public GeneticAlgorithm(OptFunction optFunction, int population, double crossoverRate, double mutationRate, int boundary, int genesN, int tournamentSize, int maxGenerations) {
+    public TentGeneticAlgorithm(OptFunction optFunction, int population, double crossoverRate, double mutationRate, int boundary, int genesN, int tournamentSize, int maxGenerations) {
         this.optFunction = optFunction;
         this.population = population;
         this.crossoverRate = crossoverRate;
@@ -46,12 +48,6 @@ public class GeneticAlgorithm {
         this.tournamentSize = tournamentSize;
     }
 
-    /**
-     * 初始化种群方法
-     * 如果Chromosomes数组为空，则创建一个新的种群
-     * 种群大小由变量population决定，每个个体的基因长度由变量genesN决定
-     * 每个基因取值范围为0到boundary-1
-     */
     public void initializePopulation() {
         // 检查Chromosomes是否为null，如果是，则进行初始化
         if (Chromosomes == null) {
@@ -61,10 +57,14 @@ public class GeneticAlgorithm {
             for (int i = 0; i < population; i++) {
                 // 创建一个基因数组，长度为genesN
                 int[] genes = new int[genesN];
-                // 遍历基因数组，为每个基因赋予随机值
+                // 生成初始混沌值
+                double x = random.nextDouble();
+                // 遍历基因数组，为每个基因赋予混沌值
                 for (int j = 0; j < genesN; j++) {
-                    // 为基因赋予随机值，范围为0到boundary-1
-                    genes[j] = random.nextInt(boundary);
+                    // 使用Tent混沌映射生成下一个混沌值
+                    x = circleMap(x);
+                    // 将混沌值转换为基因值，范围为0到boundary-1
+                    genes[j] = (int)(random.nextInt(boundary) * x);
                 }
                 // 将基因数组作为参数创建一个新的染色体对象，并添加到Chromosomes列表中
                 Chromosomes.add(new Chromosome(genes));

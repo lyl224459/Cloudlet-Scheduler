@@ -13,7 +13,7 @@ import java.util.List;
  * @description :
  */
 public class HWGAScheduler extends Scheduler {
-	private HWGA HWGA;
+	private final HWGA HWGA;
 	private static final int POPULATION = 100;
 	private static final int MAX_ITER = 100;
 	private static final double CROSSOVER_RATE = 0.6;
