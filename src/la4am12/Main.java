@@ -27,7 +27,7 @@ public class Main {
     /**
      * Cloudlets count
      */
-    private static final int CLOUDLET_N = 300;
+    private static final int CLOUDLET_N = 1000;
 
     private static final Random R = new Random(0);
 
@@ -67,7 +67,7 @@ public class Main {
         // 选择并初始化调度器
         // 可以选择不同的调度算法，如随机调度、MinMin、MaxMin、鲸鱼优化算法、遗传算法等
         // 这里选择了一种假设的高性能遗传算法调度器
-        Scheduler scheduler = new TentGAScheduler(cloudletList, vmList);
+        Scheduler scheduler = new WOAScheduler(cloudletList, vmList);
         // 执行调度
         scheduler.schedule();
 
@@ -158,7 +158,6 @@ public class Main {
 
         return new Datacenter(name, characteristics, new VmAllocationPolicySimple(hostList), storageList, 0);
     }
-
 
     /**
      * 创建并返回一个包含多个虚拟机（Vm）的列表

@@ -20,6 +20,7 @@ public class WhaleOptimizationAlgorithm {
     private double[] convergenceCurve;
     private double[] optimalPos;
     private double optimalScore;
+    double mutationRate = 0.1; // 变异概率
 
     public WhaleOptimizationAlgorithm(OptFunction optFunction, int population, int lb, int ub, int dim, int maxIter, boolean minimize) {
         this.optFunction = optFunction;
@@ -115,46 +116,95 @@ public class WhaleOptimizationAlgorithm {
      * @param a  控制参数，影响算法的收敛速度
      * @param a2 控制参数，与参数 a 一起影响算法行为
      */
+//    private void updatePosition(double a, double a2) {
+//        Random rand = new Random();
+//        // 遍历种群中的每个个体，除了最优解个体
+//        for (int i = 1; i < population; i++) {
+//            double r1 = rand.nextDouble();
+//            double r2 = rand.nextDouble();
+//            // 计算系数 A，用于模拟灰狼的社会行为
+//            double A = 2.0 * a * r1 - a;                            // Eq. (2.3) in the paper
+//            // 计算系数 C，与系数 A 一起用于更新个体位置
+//            double C = 2.0 * r2;                                    // Eq. (2.4) in the paper
+//            // b 参数用于控制螺旋更新的位置
+//            double b = 1.0;                                         // parameters in Eq. (2.5)
+//            // l 参数与 b 参数一起用于模拟灰狼的螺旋搜索行为
+//            double l = (a2 - 1.0) * rand.nextDouble() + 1.0;        // parameters in Eq. (2.5)
+//            // p 用于决定使用哪种位置更新方式
+//            double p = rand.nextDouble();                           // p in Eq. (2.6)
+//
+//            // 遍历每个维度，更新个体的位置
+//            for (int j = 0; j < dim; j++) {
+//                if (p < 0.5) {
+//                    if (Math.abs(A) < 1) {
+//                        // 计算领导者与当前个体的距离
+//                        double D_Leader = Math.abs(C * optimalPos[j] - positions[i][j]);  // Eq. (2.1)
+//                        // 根据领导者的位置和距离更新个体位置
+//                        positions[i][j] = optimalPos[j] - A * D_Leader;      // Eq. (2.2)
+//                    } else {
+//                        // 随机选择一个个体作为参考
+//                        int randWhaleIdx = rand.nextInt(population);
+//                        double[] randomPos = positions[randWhaleIdx];
+//                        // 计算随机选择的个体与当前个体的距离
+//                        double D_X_rand = Math.abs(C * randomPos[j] - positions[i][j]); // Eq. (2.7)
+//                        // 根据随机选择的个体和距离更新当前个体位置
+//                        positions[i][j] = randomPos[j] - A * D_X_rand;  // Eq. (2.8)
+//                    }
+//                } else {
+//                    // 计算当前个体与最优解的距离
+//                    double distance2Leader = Math.abs(optimalPos[j] - positions[i][j]);
+//                    // 使用螺旋更新方式更新个体位置
+//                    // Eq. (2.5)
+//                    positions[i][j] = distance2Leader * Math.exp(b * l) * Math.cos(2.0 * Math.PI * l) + optimalPos[j];
+//                }
+//            }
+//        }
+//    }
     private void updatePosition(double a, double a2) {
         Random rand = new Random();
-        // 遍历种群中的每个个体，除了最优解个体
         for (int i = 1; i < population; i++) {
             double r1 = rand.nextDouble();
             double r2 = rand.nextDouble();
-            // 计算系数 A，用于模拟灰狼的社会行为
-            double A = 2.0 * a * r1 - a;                            // Eq. (2.3) in the paper
-            // 计算系数 C，与系数 A 一起用于更新个体位置
-            double C = 2.0 * r2;                                    // Eq. (2.4) in the paper
-            // b 参数用于控制螺旋更新的位置
-            double b = 1.0;                                         // parameters in Eq. (2.5)
-            // l 参数与 b 参数一起用于模拟灰狼的螺旋搜索行为
-            double l = (a2 - 1.0) * rand.nextDouble() + 1.0;        // parameters in Eq. (2.5)
-            // p 用于决定使用哪种位置更新方式
-            double p = rand.nextDouble();                           // p in Eq. (2.6)
+            double A = 2.0 * a * r1 - a;
+            double C = 2.0 * r2;
+            double b = 1.0;
+            double l = (a2 - 1.0) * rand.nextDouble() + 1.0;
+            double p = rand.nextDouble();
 
-            // 遍历每个维度，更新个体的位置
             for (int j = 0; j < dim; j++) {
                 if (p < 0.5) {
                     if (Math.abs(A) < 1) {
-                        // 计算领导者与当前个体的距离
-                        double D_Leader = Math.abs(C * optimalPos[j] - positions[i][j]);  // Eq. (2.1)
-                        // 根据领导者的位置和距离更新个体位置
-                        positions[i][j] = optimalPos[j] - A * D_Leader;      // Eq. (2.2)
+                        double D_Leader = Math.abs(C * optimalPos[j] - positions[i][j]);
+                        positions[i][j] = optimalPos[j] - A * D_Leader;
                     } else {
-                        // 随机选择一个个体作为参考
                         int randWhaleIdx = rand.nextInt(population);
                         double[] randomPos = positions[randWhaleIdx];
-                        // 计算随机选择的个体与当前个体的距离
-                        double D_X_rand = Math.abs(C * randomPos[j] - positions[i][j]); // Eq. (2.7)
-                        // 根据随机选择的个体和距离更新当前个体位置
-                        positions[i][j] = randomPos[j] - A * D_X_rand;  // Eq. (2.8)
+                        double D_X_rand = Math.abs(C * randomPos[j] - positions[i][j]);
+                        positions[i][j] = randomPos[j] - A * D_X_rand;
                     }
                 } else {
-                    // 计算当前个体与最优解的距离
                     double distance2Leader = Math.abs(optimalPos[j] - positions[i][j]);
-                    // 使用螺旋更新方式更新个体位置
-                    // Eq. (2.5)
                     positions[i][j] = distance2Leader * Math.exp(b * l) * Math.cos(2.0 * Math.PI * l) + optimalPos[j];
+                }
+            }
+
+            // 应用高斯变异
+//            applyGaussianMutation(i);
+        }
+    }
+
+    private void applyGaussianMutation(int agentIndex) {
+        Random rand = new Random();
+        for (int j = 0; j < dim; j++) {
+            if (rand.nextDouble() < mutationRate) {
+                double gaussianNoise = rand.nextGaussian();
+                positions[agentIndex][j] += gaussianNoise;
+                // 确保位置仍在搜索空间内
+                if (positions[agentIndex][j] < lb) {
+                    positions[agentIndex][j] = lb;
+                }
+                if (positions[agentIndex][j] > ub) {
+                    positions[agentIndex][j] = ub;
                 }
             }
         }

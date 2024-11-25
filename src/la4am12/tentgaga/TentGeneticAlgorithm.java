@@ -25,7 +25,7 @@ public class TentGeneticAlgorithm {
      * random: 随机数生成器，用于生成随机数。
      * Chromosomes: 染色体列表，存储当前种群中的所有染色体。
      * bestChromosome: 最佳染色体，存储当前找到的最佳解。
-     * */
+     */
     private OptFunction optFunction;
     private int boundary;
     private int population;
@@ -62,9 +62,9 @@ public class TentGeneticAlgorithm {
                 // 遍历基因数组，为每个基因赋予混沌值
                 for (int j = 0; j < genesN; j++) {
                     // 使用Tent混沌映射生成下一个混沌值
-                    x = circleMap(x);
+                    x = logisticMap(x);
                     // 将混沌值转换为基因值，范围为0到boundary-1
-                    genes[j] = (int)(random.nextInt(boundary) * x);
+                    genes[j] = (int) (random.nextInt(boundary) * x);
                 }
                 // 将基因数组作为参数创建一个新的染色体对象，并添加到Chromosomes列表中
                 Chromosomes.add(new Chromosome(genes));
@@ -121,11 +121,11 @@ public class TentGeneticAlgorithm {
     // 对染色体进行变异
     public void mutate(Chromosome chromosome) {
         int[] genes = chromosome.getGenes();
-        for (int i = 0; i < genesN; i++) {
-            if (random.nextDouble() < mutationRate) {
-                genes[i] = random.nextInt(boundary);
-            }
-        }
+        // 选择变异策略
+//         MutationStrategies.uniformMutation(genes, mutationRate, boundary);
+         MutationStrategies.cauchyMutation(genes, mutationRate, boundary);
+//         MutationStrategies.differentialMutation(genes, mutationRate, boundary, Chromosomes.stream().map(Chromosome::getGenes).wait());
+//        MutationStrategies.adaptiveTMutation(genes, mutationRate, boundary, 5.0); // 自由度设为5.0
         chromosome.setGenes(genes);
     }
 

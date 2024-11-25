@@ -30,3 +30,7 @@ Comparison of fitness values of WOA and HWGA algorithms under different number o
 
 Comparison of fitness values of WOA and HWGA algorithms at different population sizes:
 ![img.png](.github/images/img5.png)
+
+<hr>
+
+Power By [LA4AM12](https://github.com/LA4AM12)
